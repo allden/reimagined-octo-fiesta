@@ -22,10 +22,14 @@ router.post('/register', passport.authenticate('jwt', {session: false}), UserCon
 
 router.post('/login', UserController.loginUser);
 
-router.get('/protected', passport.authenticate('jwt', {session: false}), (req, res) => {
-    res.json({
-        message: 'You have entered the protected route!'
-    });
-});
+router.get('*', notFound);
+router.post('*', notFound);
+router.delete('*', notFound);
+router.put('*', notFound);
 
+function notFound(req, res) {
+    res.status(404).json({
+        message: 'Not found.'
+    });
+};
 module.exports = router;

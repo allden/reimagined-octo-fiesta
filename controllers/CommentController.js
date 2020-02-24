@@ -58,7 +58,7 @@ module.exports.deleteComment = (req, res) => {
             })
             .catch(err => errorHandling(err, res));
         } else {
-            return res.status(500).json({
+            return res.status(404).json({
                 message: "Not found"
             });
         };

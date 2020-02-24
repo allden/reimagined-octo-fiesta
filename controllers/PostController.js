@@ -6,8 +6,6 @@ const jwt = require('jsonwebtoken');
 // GET all
 module.exports.getPosts = (req, res) => {
     Post.find({})
-    .populate('author')
-    .exec()
     .then(posts => {
         return res.json(posts);
     })
@@ -35,7 +33,7 @@ module.exports.createPost = (req, res) => {
         User.findById({_id: decoded.id})
         .then(user => {
             new Post({
-                author: user._id,
+                author: user.getFullName,
                 title,
                 content,
                 published
@@ -57,13 +55,11 @@ module.exports.getPost = (req, res) => {
     let id = req.params.id;
 
     Post.findById({_id: id})
-    .populate('author')
-    .exec()
     .then(post => {
         if(post) {
             return res.json({ post });
         } else {
-            return res.json({
+            return res.status(404).json({
                 message: "Not found."
             });
         };
@@ -92,7 +88,7 @@ module.exports.deletePost = (req, res) => {
             .catch(err => errorHandling(err, res));
             
         } else {
-            return res.json({
+            return res.status(404).json({
                 message: "Not found."
             });
         };
@@ -108,6 +104,9 @@ module.exports.updatePost = (req, res) => {
     Post.findById({_id: id})
     .then(post => {
         if(post) {
+            if(!title) title = post.title;
+            if(!content) content = post.content;
+            if(!published) published = post.published;
             Post.findByIdAndUpdate({_id: id}, {title, content, published})
             .then(updatedPost => {
                 return res.json({
@@ -117,7 +116,7 @@ module.exports.updatePost = (req, res) => {
             })
             .catch(err => errorHandling(err, res));
         } else {
-            return res.json({
+            return res.status(404).json({
                 message: "Not found."
             });
         };

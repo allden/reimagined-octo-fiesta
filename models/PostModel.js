@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const opts = { toJSON: {virtuals: true}};
+const opts = {toJSON: { virtuals: true }, versionKey: false, id: false};
 
 const PostSchema = new Schema({
     title: {
@@ -8,8 +8,8 @@ const PostSchema = new Schema({
         required: true
     },
     author: {
-        type: Schema.Types.ObjectId, 
-        ref: 'User'
+        type: String,
+        required: true
     },
     content: {
         type: String, 
@@ -22,10 +22,6 @@ const PostSchema = new Schema({
     published: {
         type: Boolean, 
         default: false
-    },
-    approvalRating: {
-        type: Number, 
-        default: 0
     }
 }, opts);
 

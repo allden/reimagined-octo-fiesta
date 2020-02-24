@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const opts = { toJSON: {virtuals: true}};
+const opts = {toJSON: { virtuals: true }, versionKey: false, id: false};
 
 const UserSchema = new Schema({
     firstName: {
