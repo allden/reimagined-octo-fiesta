@@ -9,7 +9,7 @@ module.exports.getPosts = (req, res) => {
     .populate('author')
     .exec()
     .then(posts => {
-        res.json(posts);
+        return res.json(posts);
     })
     .catch(err => errorHandling(err, res));
 };
@@ -19,28 +19,29 @@ module.exports.createPost = (req, res) => {
     const secret = process.env.SECRET_KEY;
     let bearer = req.headers.authorization;
     let bearerToken = bearer.split(' ')[1];
-    let {content, published} = req.body;
+    let {title, content, published} = req.body;
 
-    if(!content) {
-        res.status(403).json({
-            message: 'Post body cannot be empty!'
+    if(!content || !title) {
+        return res.status(403).json({
+            message: 'Please include both a title and the post content.'
         });
     };
 
     jwt.verify(bearerToken, secret, (err, decoded) => {
         if(err) {
-            res.status(500).json({message: 'Something went wrong.'});
+            return res.status(500).json({message: 'Something went wrong.'});
         };
 
         User.findById({_id: decoded.id})
         .then(user => {
             new Post({
                 author: user._id,
+                title,
                 content,
                 published
             }).save()
             .then(post => {
-                res.json({
+                return res.json({
                     message: 'Post created',
                     post
                 });
@@ -60,9 +61,9 @@ module.exports.getPost = (req, res) => {
     .exec()
     .then(post => {
         if(post) {
-            res.json({ post });
+            return res.json({ post });
         } else {
-            res.json({
+            return res.json({
                 message: "Not found."
             });
         };
@@ -81,7 +82,7 @@ module.exports.deletePost = (req, res) => {
             .then(deletedPost => {
                 Comment.deleteMany({forPost: id})
                 .then(deletedComments => {
-                    res.json({
+                    return res.json({
                         message: 'Successfully deleted.',
                         deletedPost
                     });
@@ -91,7 +92,7 @@ module.exports.deletePost = (req, res) => {
             .catch(err => errorHandling(err, res));
             
         } else {
-            res.json({
+            return res.json({
                 message: "Not found."
             });
         };
@@ -102,21 +103,21 @@ module.exports.deletePost = (req, res) => {
 // PUT
 module.exports.updatePost = (req, res) => {
     let id = req.params.id;
-    let { content, published } = req.body;
+    let { title, content, published } = req.body;
 
     Post.findById({_id: id})
     .then(post => {
         if(post) {
-            Post.findByIdAndUpdate({_id: id}, {content, published})
+            Post.findByIdAndUpdate({_id: id}, {title, content, published})
             .then(updatedPost => {
-                res.json({
+                return res.json({
                     message: 'Updated successfully',
                     updatedPost
                 });
             })
             .catch(err => errorHandling(err, res));
         } else {
-            res.json({
+            return res.json({
                 message: "Not found."
             });
         };
@@ -126,5 +127,5 @@ module.exports.updatePost = (req, res) => {
 
 function errorHandling(err, res) {
     console.error(err);
-    res.status(500).json({message: 'Something went wrong.'});
+    return res.status(500).json({message: 'Something went wrong.'});
 };

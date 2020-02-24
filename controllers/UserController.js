@@ -12,7 +12,7 @@ module.exports.createUser = (req, res) => {
     User.findOne({email})
     .then(found => {
         if(found) {
-            res.status(403).json({
+            return res.status(403).json({
                 message: 'Email already exists.'
             });
         } else {
@@ -29,7 +29,7 @@ module.exports.loginUser = (req, res) => {
     let {email, password} = req.body;
 
     if(!email || !password) {
-        res.status(401).json('Please fill in your email and password.');
+        return res.status(401).json('Please fill in your email and password.');
     };
 
     User.findOne({email})
@@ -41,19 +41,19 @@ module.exports.loginUser = (req, res) => {
                     const opts = {expiresIn: '1d'};
                     const secret = process.env.SECRET_KEY;
                     const token = jwt.sign({id: user._id}, secret, opts);
-                    res.json({
+                    return res.json({
                         message: 'Successfully logged in.',
                         token
                     });
                 } else {
-                    res.status(403).json({
+                    return res.status(403).json({
                         message: 'Incorrect password.'
                     });
                 };
             })
             .catch(err => errorHandling(err, res));
         } else {
-            res.status(403).json({
+            return res.status(403).json({
                 message: 'This email is not registered.'
             });
         };
@@ -63,14 +63,14 @@ module.exports.loginUser = (req, res) => {
 
 function errorHandling(err, res) {
     console.error(err);
-    res.status(500).json({message: 'Something went wrong.'});
+    return res.status(500).json({message: 'Something went wrong.'});
 };
 
 function validateRegistration(req, res, firstName, lastName, email, password, password2) {
     let errors = [];
 
     if(!firstName || !lastName || !email || !password || !password2) {
-        res.status(403).json({
+        return res.status(403).json({
             message: 'Please fill out every field.'
         });
     };
@@ -97,7 +97,7 @@ function validateRegistration(req, res, firstName, lastName, email, password, pa
 
     // if there are any errors, send 403 status
     if(errors.length > 0) {
-        res.status(403).json({
+        return res.status(403).json({
             message: errors
         });
     };
@@ -116,7 +116,7 @@ function saveUserToDB(req, res, firstName, lastName, email, password) {
             console.log(userInfo);
             new User(userInfo).save()
             .then((user) => {
-                res.json({
+                return res.json({
                     message: 'Success!',
                     user
                 });
