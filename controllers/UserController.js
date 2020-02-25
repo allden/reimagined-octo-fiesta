@@ -29,7 +29,7 @@ module.exports.loginUser = (req, res) => {
     let {email, password} = req.body;
 
     if(!email || !password) {
-        return res.status(401).json('Please fill in your email and password.');
+        return res.status(401).json({message: 'Please fill in your email and password.'});
     };
 
     User.findOne({email})
