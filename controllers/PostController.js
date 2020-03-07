@@ -5,7 +5,11 @@ const jwt = require('jsonwebtoken');
 
 // GET all
 module.exports.getPosts = (req, res) => {
-    Post.find({})
+    const search = req.query.search ? `.*${req.query.search}.*` : '.*';
+    const { limit, skip } = req.query;
+    Post.find({title: new RegExp(search, "is")})
+    .limit(Number(limit))
+    .skip(Number(skip))
     .then(posts => {
         return res.json(posts);
     })

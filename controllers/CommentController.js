@@ -2,9 +2,12 @@ const Comment = require('../models/CommentModel');
 
 // GET all for specific post
 module.exports.getComments = (req, res) => {
-    let { postId } = req.params;
+    const { postId } = req.params;
+    const { limit, skip } = req.query;
 
     Comment.find({forPost: postId})
+    .limit(Number(limit))
+    .skip(Number(skip))
     .then(comments => {
         return res.json({comments});
     })
