@@ -7,7 +7,7 @@ const CommentSchema = new Schema({
     postedBy: String,
     timeOfCreation: {
         type: Date, 
-        default: Date.now()
+        default: new Date()
     },
     forPost: {
         type: Schema.Types.ObjectId, 

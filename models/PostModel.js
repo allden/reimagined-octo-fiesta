@@ -17,7 +17,7 @@ const PostSchema = new Schema({
     },
     timeOfCreation: {
         type: Date, 
-        default: Date.now()
+        default: new Date()
     },
     published: {
         type: Boolean, 
