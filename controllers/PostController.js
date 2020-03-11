@@ -11,11 +11,12 @@ module.exports.getPosts = (req, res) => {
     .limit(Number(limit))
     .skip(Number(skip))
     .sort({timeOfCreation: -1})
-    .exec()
-    .then(posts => {
-        return res.json(posts);
+    .exec((err, posts) => {
+        if(err) {
+            errorHandling(err, res);
+        }
+        return res.json({posts});
     })
-    .catch(err => errorHandling(err, res));
 };
 
 // POST

@@ -9,11 +9,12 @@ module.exports.getComments = (req, res) => {
     .limit(Number(limit))
     .skip(Number(skip))
     .sort({timeOfCreation: -1})
-    .exec()
-    .then(comments => {
+    .exec((err, comments) => {
+        if(err) {
+            errorHandling(err, res);
+        }
         return res.json({comments});
     })
-    .catch(err => errorHandling(err, res));
 };
 
 // POST
