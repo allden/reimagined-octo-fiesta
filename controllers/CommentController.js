@@ -8,6 +8,8 @@ module.exports.getComments = (req, res) => {
     Comment.find({forPost: postId})
     .limit(Number(limit))
     .skip(Number(skip))
+    .sort({timeOfCreation: -1})
+    .exec()
     .then(comments => {
         return res.json({comments});
     })

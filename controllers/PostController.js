@@ -10,6 +10,8 @@ module.exports.getPosts = (req, res) => {
     Post.find({title: new RegExp(search, "is")})
     .limit(Number(limit))
     .skip(Number(skip))
+    .sort({timeOfCreation: -1})
+    .exec()
     .then(posts => {
         return res.json(posts);
     })
